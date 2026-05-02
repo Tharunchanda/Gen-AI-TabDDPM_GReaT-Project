@@ -1,0 +1,117 @@
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual Environments
+myenv/
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.sublime-workspace
+.code-workspace
+.netrc
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+!agg_results.ipynb
+
+# Data directories (large files - EXCLUDE)
+data/
+*/data/
+adult_data/
+*/adult_data/
+
+# Experiment outputs (large - EXCLUDE)
+exp/
+*/exp/
+tuned_models/
+*/tuned_models/
+
+# Model checkpoints (large - EXCLUDE)
+*.npy
+*.pkl
+*.pth
+*.pt
+*.joblib
+*.h5
+*.hdf5
+*.ckpt
+checkpoint*/
+
+# CatBoost
+catboost_info/
+*/catboost_info/
+
+# Build artifacts
+RF/
+exps/
+junk/
+configs/
+
+# Logs
+*.log
+*.tar
+*.tar.gz
+*.zip
+*.gz
+
+# Output files (generated)
+results_*.json
+metrics*.json
+summary*.txt
+*.csv
+
+# PDF reports (keep .tex source)
+*.pdf
+*.aux
+*.bbl
+*.blg
+*.out
+*.fls
+*.fdb_latexmk
+
+# Large binary outputs
+*.obj
+*.bin
+
+# Visualization outputs
+evaluation/
+baseline_evaluation/
+*/evaluation/
+*/baseline_evaluation/
+
+# Temporary
+*.tmp
+*.bak
+.cache/
+.pytest_cache/
+
+# Keep source code files
+!*.py
+!*.tex
+!*.md
+!*.txt
+!*.yml
+!*.yaml
+!*.toml
+!requirements*.txt
+!
