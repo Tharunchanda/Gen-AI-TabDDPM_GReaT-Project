@@ -16,26 +16,24 @@
 \usepackage{url}
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
-
 \begin{document}
 
-\title{Distribution-Regularized Diffusion Models for Constrained Synthetic Tabular Data Generation:\nA Comprehensive Comparative Study on Financial Customer Churn Datasets}
+\title{Distribution-Regularized Tabular Data Generation with TabDDPM and GReaT for Financial Churn
 
 \author{
-    \IEEEauthorblockN{Department of AI \& Machine Learning Research}
-    \IEEEauthorblockA{GenAI-GREAT-MODEL \& Bank Churn Dataset Study \\ April 2026}
+    \IEEEauthorblockN{Generative AI Research Project}
+    \IEEEauthorblockA{Bank Churn Dataset Study \\ April 2026}\\
+     {Project repository: \href{https://github.com/Tharunchanda/Gen-AI-TabDDPM_GReaT-Project}{GitHub Link}}}
 }
 
 \maketitle
 
 \begin{abstract}
-Synthetic tabular data generation has become increasingly critical for addressing privacy preservation, data augmentation, and model evaluation challenges in financial machine learning applications. This paper presents a comprehensive two-phase empirical study evaluating the practical performance of synthetic customer data generation methodologies on a bank customer churn dataset from Botswana. In Phase 1, we conduct a detailed baseline evaluation of the Generative Regression Tree (GReaT) framework, employing an extensive suite of statistical fidelity metrics. Our analysis reveals a pronounced dichotomy in synthetic data quality: categorical features achieve excellent distributional alignment with real data (Jensen-Shannon Divergence mean: 0.2167), while numerical features exhibit substantial divergence (mean Wasserstein Distance: 93.8166) and generate unconstrained outliers that violate domain-specific value ranges.
-
-To systematically address these numerical distribution pathologies, Phase 2 introduces and evaluates Condition-1 (Cond1)---a lightweight training-side regularization framework for Tabular Denoising Diffusion Probabilistic Models (TabDDPM). The proposed approach incorporates three key components: (1) soft distribution regularization during training to align predicted denoised numerics with target per-feature mean and standard deviation statistics, (2) optional soft constraint penalties for empirical quantile-bound enforcement, and (3) deterministic stratified evaluation for reproducible metrics. Experimental results demonstrate that Cond1 achieves well-calibrated synthetic data quality (mean Wasserstein Distance: 0.0363) while substantially reducing constraint violations to 9.24\%, thereby establishing a principled trade-off between marginal fidelity preservation and domain-required constraint satisfaction. The methodology is reproducible, hyperparameter-tunable, and generalizable to other tabular datasets.
+Synthetic tabular data generation is critical for privacy preservation and data augmentation in financial machine learning. This paper presents a two-phase empirical study using a bank customer churn dataset from Botswana. Phase 1 evaluates the GReaT (Generative Regression Tree) framework, revealing a quality dichotomy: while categorical features achieve high fidelity, numerical features exhibit significant distributional divergence and domain constraint violations. Phase 2 introduces \textit{Condition-1} (Cond1), a lightweight regularization framework for Tabular Denoising Diffusion Probabilistic Models (TabDDPM). Cond1 utilizes soft distribution regularization and quantile-bound penalties to align synthetic numerics with target statistics. Experimental results show that Cond1 achieves superior numerical calibration (mean Wasserstein Distance: 0.0363) and reduces constraint violations to 9.24\%, providing a robust methodology for balancing marginal fidelity with domain-specific constraints.
 \end{abstract}
 
 \begin{IEEEkeywords}
-synthetic tabular data, diffusion models, TabDDPM, GReaT, distribution regularization, evaluation metrics, constraint satisfaction, privacy-preserving data
+synthetic tabular data, diffusion models, TabDDPM, Generation of Realistic Tabular data (GReaT), distribution regularization, evaluation metrics, constraint satisfaction, privacy-preserving data
 \end{IEEEkeywords}
 
 \section{INTRODUCTION}
@@ -43,15 +41,15 @@ The proliferation of machine learning applications within the financial services
 
 Synthetic data generation has emerged as a promising technical solution to this foundational challenge, enabling the creation of statistically realistic, representative datasets that preserve individual-level privacy guarantees while maintaining distributional fidelity to source populations. However, achieving this balance—particularly for numerical financial features with complex marginal structures and multimodal distributions—remains an open research problem.
 
-This report presents a systematic, two-phase investigation of synthetic tabular data generation methodologies applied to financial customer churn prediction. Phase 1 conducts a comprehensive baseline evaluation of the Generative Regression Tree (GReaT) framework, with the explicit goal of identifying specific distributional pathologies and performance limitations when applied to financial datasets. Phase 2 proposes and empirically validates Condition-1 (Cond1)---a novel training-time regularization strategy for Tabular Denoising Diffusion Probabilistic Models (TabDDPM)---designed to systematically address the identified numerical distribution pathologies while maintaining high-fidelity categorical feature generation. The methodology balances pragmatic domain constraints (bounded numerical ranges) against theoretical distributional fidelity objectives, with rigorous, reproducible evaluation protocols.
+This report presents a systematic, two-phase investigation of synthetic tabular data generation methodologies applied to financial customer churn prediction. Phase 1 conducts a comprehensive baseline evaluation of the Generation of Realistic Tabular data (GReaT) framework, with the explicit goal of identifying specific distributional pathologies and performance limitations when applied to financial datasets. Phase 2 proposes and empirically validates Condition-1 (Cond1)---a novel training-time regularization strategy for Tabular Denoising Diffusion Probabilistic Models (TabDDPM)---designed to systematically address the identified numerical distribution pathologies while maintaining high-fidelity categorical feature generation. The methodology balances pragmatic domain constraints (bounded numerical ranges) against theoretical distributional fidelity objectives, with rigorous, reproducible evaluation protocols.
 
 \section{RESEARCH MOTIVATION AND OBJECTIVES}
 
-\subsection{Phase 1: Baseline GReaT Framework Evaluation}
+\subsection{Phase 1: Baseline Generation of Realistic Tabular data (GReaT) Framework Evaluation}
 The primary research objectives of the initial baseline evaluation phase are:
 \begin{itemize}
     \item To formalize and implement a comprehensive, multi-metric evaluation framework specifically designed for assessing synthetic tabular data quality across heterogeneous feature types.
-    \item To rigorously quantify the distributional fidelity of GReaT-generated synthetic data, decomposed across numerical and categorical feature subsets, to identify specific pathologies.
+    \item To rigorously quantify the distributional fidelity of Generation of Realistic Tabular data (GReaT)-generated synthetic data, decomposed across numerical and categorical feature subsets, to identify specific pathologies.
     \item To systematically characterize the relationship between individual feature properties (skewness, range, cardinality) and overall synthetic data quality metrics.
     \item To provide empirically grounded diagnostic insights to inform the design of improved generation and regularization strategies.
     \item To establish a reproducible baseline reference dataset for comparative evaluation of alternative methodologies.
@@ -67,7 +65,7 @@ The research objectives for Phase 2 focus on designing and validating a principl
     \item \textbf{Quantify trade-offs}: explicitly measure and characterize the fidelity-constraint satisfaction trade-off frontier to inform hyperparameter selection.
 \end{itemize}
 
-\section{PHASE 1: BASELINE EVALUATION USING GReaT FRAMEWORK}
+\section{PHASE 1: BASELINE EVALUATION USING Generation of Realistic Tabular data (GReaT) FRAMEWORK}
 
 \subsection{Evaluation Dataset and Characteristics}
 This study employs the Botswana Bank Customer Churn dataset, a real-world financial services dataset containing comprehensive customer demographic, financial account, and behavioral information. The dataset represents a realistic, operationally relevant challenge for synthetic data generation, with mixed numerical and categorical feature types representative of typical banking customer master datasets. The original dataset comprises $N = 999$ customer records spanning 16 features; one feature (occupational classification) was excluded from analysis to focus on core modeling variables, resulting in an evaluation dataset of 15 features.
@@ -75,7 +73,7 @@ This study employs the Botswana Bank Customer Churn dataset, a real-world financ
 Dataset composition:
 \begin{itemize}
     \item Real training data: 999 customer records
-    \item GReaT synthetic output: 4,995 records (5× augmentation factor)
+    \item Generation of Realistic Tabular data (GReaT) synthetic output: 4,995 records (5× augmentation factor)
     \item Numerical feature count: 10 (continuous and discrete numerical variables)
     \item Categorical feature count: 5 (nominal demographic and product variables)
     \item Target variable: binary classification indicator for customer churn status
@@ -108,7 +106,7 @@ Frobenius_{L2} = ||C_r - C_s||_F = \sqrt{\sum_{i=1}^{n}\sum_{j=1}^{n}(C_{r}^{ij}
 \subsection{Global Quality Assessment and Overall Fidelity Rating}
 \begin{table}[htbp]
 \centering
-\caption{Global Evaluation Metrics Summary (GReaT)}
+\caption{Global Evaluation Metrics Summary (Generation of Realistic Tabular data (GReaT))}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lll}
 \toprule
@@ -135,20 +133,20 @@ The evaluation includes visual analyses of the generated distributions provided 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{metrics_output_before/wasserstein.png}
-\caption{Phase 1: Output matrix for Wasserstein distance across numerical features generated by GReaT.}
+\caption{Phase 1: Output matrix for Wasserstein distance across numerical features generated by Generation of Realistic Tabular data (GReaT).}
 \label{fig:great_wasserstein}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{metrics_output_before/jsd.png}
-\caption{Phase 1: Output matrix for Jensen-Shannon divergence across categorical features generated by GReaT.}
+\caption{Phase 1: Output matrix for Jensen-Shannon divergence across categorical features generated by Generation of Realistic Tabular data (GReaT).}
 \label{fig:great_jsd}
 \end{figure}
 
 \begin{table}[htbp]
 \centering
-\caption{Wasserstein Distance per Numerical Feature (GReaT)}
+\caption{Wasserstein Distance per Numerical Feature (Generation of Realistic Tabular data (GReaT))}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lll}
 \toprule
@@ -174,7 +172,7 @@ Notably, only the ``Credit History Length'' feature achieves a ``Good'' assessme
 
 \begin{table}[htbp]
 \centering
-\caption{Jensen-Shannon Divergence per Categorical Feature (GReaT)}
+\caption{Jensen-Shannon Divergence per Categorical Feature (Generation of Realistic Tabular data (GReaT))}
 \resizebox{\columnwidth}{!}{%
 \begin{tabular}{lll}
 \toprule
@@ -207,7 +205,7 @@ The empirical evaluation reveals pronounced performance heterogeneity across fea
 
 \textbf{Demonstrated Strengths:}
 \begin{itemize}
-    \item \textbf{Categorical feature fidelity}: Excellent distributional alignment for demographic categorical features, particularly Gender (JSD = 0.0237), suggesting that GReaT's categorical modeling components are well-calibrated for balanced demographic distributions.
+    \item \textbf{Categorical feature fidelity}: Excellent distributional alignment for demographic categorical features, particularly Gender (JSD = 0.0237), suggesting that Generation of Realistic Tabular data (GReaT)'s categorical modeling components are well-calibrated for balanced demographic distributions.
     \item \textbf{Range preservation}: Good coverage (0.8791) and density (0.7106) metrics indicate that a substantial fraction of synthetic samples fall within real data value ranges, demonstrating basic plausibility of feature scales.
     \item \textbf{Data augmentation capability}: Successful generation of 4,995 synthetic records from 999 real samples, demonstrating scalability and sample multiplication without immediate mode collapse.
 \end{itemize}
@@ -225,9 +223,9 @@ The observed numerical feature pathologies are hypothesized to stem from the fol
 \begin{enumerate}
     \item \textbf{Inadequate feature normalization:} Suboptimal or absent normalization of numerical features during preprocessing may cause numerical instability in model predictions, leading to unbounded extreme values during generation.
     \item \textbf{Heavy-tailed distributional structure:} Financial features commonly exhibit right-skewed, heavy-tailed distributions (log-normal income distributions, power-law account balance distributions) that regression-tree architectures are fundamentally ill-suited to capture.
-    \item \textbf{Limited model expressiveness:} GReaT's tree-based architecture may lack sufficient expressiveness to model complex multimodal and correlated structures present in financial customer populations.
+    \item \textbf{Limited model expressiveness:} Generation of Realistic Tabular data (GReaT)'s tree-based architecture may lack sufficient expressiveness to model complex multimodal and correlated structures present in financial customer populations.
     \item \textbf{Insufficient training iterations:} The model may require substantially more training data, extended training horizons, or careful hyperparameter tuning to converge to high-fidelity solutions.
-    \item \textbf{Absent constraint enforcement:} The baseline GReaT architecture provides no mechanism for enforcing domain-specific value constraints, permitting unconstrained generation of implausible extremes.
+    \item \textbf{Absent constraint enforcement:} The baseline Generation of Realistic Tabular data (GReaT) architecture provides no mechanism for enforcing domain-specific value constraints, permitting unconstrained generation of implausible extremes.
 \end{enumerate}
 
 \subsection{Recommendations for Enhanced Model Development}
@@ -317,68 +315,68 @@ For Condition-1 in the reported experiments, we employ the following hyperparame
 
 \section{PHASE 2: EVALUATION VISUALIZATIONS}
 
-The images below document the baseline TabDDPM reference set used for comparison.
+The images below document the Condition 1 (Cond1) TabDDPM evaluation results with distribution regularization and constraint enforcement applied.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{baseline_evaluation/summary_dashboard.png}
-\caption{Baseline evaluation dashboard summarizing overall fidelity diagnostics.}
+\includegraphics[width=\linewidth]{evaluation_cond_1/summary_dashboard.png}
+\caption{Condition 1 evaluation dashboard summarizing overall fidelity diagnostics with regularization applied.}
 \label{fig:summary_dashboard}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{baseline_evaluation/numerical_distributions.png}
-\caption{Baseline numerical distributions across the churn features.}
+\includegraphics[width=\linewidth]{evaluation_cond_1/numerical_distributions.png}
+\caption{Condition 1 numerical distributions across the churn features with distribution regularization applied.}
 \label{fig:numerical_distributions}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{baseline_evaluation/categorical_distributions.png}
-\caption{Baseline categorical feature distributions for churn.}
+\includegraphics[width=\linewidth]{evaluation_cond_1/categorical_distributions.png}
+\caption{Condition 1 categorical feature distributions for churn with constraint enforcement.}
 \label{fig:categorical_distributions}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{baseline_evaluation/wasserstein.png}
-\caption{Per-feature Wasserstein distance for the churn evaluation set.}
+\includegraphics[width=\linewidth]{evaluation_cond_1/wasserstein.png}
+\caption{Per-feature Wasserstein distance with Condition 1 applied across numerical features.}
 \label{fig:wasserstein}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{baseline_evaluation/jsd.png}
-\caption{Per-feature Jensen-Shannon divergence for the churn evaluation set.}
+\includegraphics[width=\linewidth]{evaluation_cond_1/jsd.png}
+\caption{Per-feature Jensen-Shannon divergence with Condition 1 applied across categorical features.}
 \label{fig:jsd}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{baseline_evaluation/density_coverage.png}
-\caption{Density and coverage summary for the churn evaluation set.}
+\includegraphics[width=\linewidth]{evaluation_cond_1/density_coverage.png}
+\caption{Density and coverage summary demonstrating improved sample coverage with Condition 1 regularization.}
 \label{fig:density_coverage}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{baseline_evaluation/correlation_real.png}
-\caption{Correlation heatmap for the real churn data.}
+\includegraphics[width=\linewidth]{evaluation_cond_1/correlation_real.png}
+\caption{Real churn data correlation structure for baseline comparison.}
 \label{fig:correlation_real}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{baseline_evaluation/correlation_synthetic.png}
-\caption{Correlation heatmap for the synthetic churn data.}
+\includegraphics[width=\linewidth]{evaluation_cond_1/correlation_synthetic.png}
+\caption{Synthetic churn data correlation structure generated with Condition 1 applied.}
 \label{fig:correlation_synthetic}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{baseline_evaluation/correlation_diff.png}
-\caption{Correlation difference heatmap between real and synthetic data.}
+\includegraphics[width=\linewidth]{evaluation_cond_1/correlation_diff.png}
+\caption{Correlation difference heatmap showing improved alignment with Condition 1 applied.}
 \label{fig:correlation_diff}
 \end{figure}
 
@@ -525,7 +523,7 @@ This work establishes a foundation for training-side regularization of diffusion
 \begin{enumerate}
     \item \textbf{Systematic Hyperparameter Optimization}: Conduct grid search over distribution weight ($\lambda_{\text{dist}} \in [0.005, 0.01, 0.02, 0.05, 0.10]$), warmup fraction ($\tau \in [0.1, 0.2, 0.3]$), and constraint quantiles. Plot Pareto frontiers to characterize fidelity-constraint trade-offs.
     
-    \item \textbf{Downstream Utility Benchmarking}: Implement the comprehensive joint benchmark utility (scripts/joint\_benchmark.py): train RandomForest, XGBoost, and logistic regression classifiers on synthetic data; evaluate performance on real held-out test sets; measure AUC, F1-score, precision, recall. Compare Cond1 against baseline TabDDPM and GReaT.
+    \item \textbf{Downstream Utility Benchmarking}: Implement the comprehensive joint benchmark utility (scripts/joint\_benchmark.py): train RandomForest, XGBoost, and logistic regression classifiers on synthetic data; evaluate performance on real held-out test sets; measure AUC, F1-score, precision, recall. Compare Cond1 against baseline TabDDPM and Generation of Realistic Tabular data (GReaT).
     
     \item \textbf{Privacy Evaluation}: Conduct membership inference attack experiments to empirically quantify privacy leakage. Implement various attack strategies (baseline classifier, gradient-based attacks) and report AUROC curves.
     
@@ -541,7 +539,7 @@ This work establishes a foundation for training-side regularization of diffusion
 This comprehensive two-phase empirical study has yielded several substantive contributions to the synthetic tabular data generation literature:
 
 \subsection{Phase 1 Contributions}
-The baseline GReaT evaluation demonstrates that tree-based generative models, despite strong performance on categorical features, exhibit catastrophic failure modes on numerical financial features, including extreme outlier generation (maximum synthetic income \$531M vs. real maximum \$99K) and target variable misspecification (Churn Flag Wasserstein distance of 863.46). These findings quantitatively establish the critical importance of specialized architectures and regularization strategies for financial datasets, motivating the development of improved approaches.
+The baseline Generation of Realistic Tabular data (GReaT) evaluation demonstrates that tree-based generative models, despite strong performance on categorical features, exhibit catastrophic failure modes on numerical financial features, including extreme outlier generation (maximum synthetic income \$531M vs. real maximum \$99K) and target variable misspecification (Churn Flag Wasserstein distance of 863.46). These findings quantitatively establish the critical importance of specialized architectures and regularization strategies for financial datasets, motivating the development of improved approaches.
 
 \subsection{Phase 2 Contributions}
 The proposed Condition-1 framework makes the following scientific and practical contributions:
@@ -564,7 +562,7 @@ These results suggest that training-side regularization provides a viable pathwa
 For practitioners deploying synthetic data in financial applications, Cond1 offers a tunable framework that can be calibrated to specific risk tolerances: conservative settings prioritizing constraint satisfaction, or aggressive settings prioritizing fidelity. The modular design permits integration into existing TabDDPM training pipelines with minimal engineering overhead.
 
 \subsection{Final Remarks}
-This study contributes both negative results (baseline GReaT limitations) and positive results (Cond1 improvements), providing a more complete picture of the synthetic tabular data generation landscape for financial applications. Future work should extend these findings through downstream utility benchmarking, privacy evaluation, and cross-dataset validation to establish Cond1 as a general-purpose tool for constrained synthetic data generation. 
+This study contributes both negative results (baseline Generation of Realistic Tabular data (GReaT) limitations) and positive results (Cond1 improvements), providing a more complete picture of the synthetic tabular data generation landscape for financial applications. Future work should extend these findings through downstream utility benchmarking, privacy evaluation, and cross-dataset validation to establish Cond1 as a general-purpose tool for constrained synthetic data generation. 
 
 \appendices
 
@@ -607,9 +605,17 @@ Density=\frac{1}{n}\sum_{i=1}^{n}\sum_{b=1}^{B}\min(h_{r}^{b},h_{s}^{b}) \label{
 
 \\section{Implementation Artifacts and Reproducibility}
 The Condition-1 framework has been implemented as a modular extension to TabDDPM with comprehensive supporting scripts for training, generation, and evaluation. Key implementation artifacts include:
+\begin{itemize}
+    \item \texttt{tab\_ddpm/gaussian\_multinomial\_diffusion.py}: Core diffusion model containing new regularization loss functions (\texttt{\_distribution\_loss()} and \texttt{\_constraint\_loss()}), integrated into the mixed-loss computation pipeline via warmup-scheduled weighting.
+    \item \texttt{scripts/train.py}: Extended training loop implementing target statistic computation from real data, warmup scheduler instantiation, per-epoch metric logging, and EMA checkpoint management.
+    \item \texttt{generate\_synthetic\_cond1.py}: Standalone, reproducible generation script featuring EMA-checkpoint restoration, deterministic seed initialization, and batch-wise sampling with memory efficiency.
+    \item \texttt{evaluate\_synthetic\_cond1.py}: Comprehensive evaluation framework implementing deterministic stratified sampling, per-feature metric computation (Wasserstein, JSD, correlation), density/coverage estimation, constraint violation diagnostics, and publication-quality visualization generation.
+    \item \texttt{scripts/joint\_benchmark.py}: Unified benchmarking utility combining fidelity metrics (Wasserstein, JSD, correlation), downstream utility assessment (train-on-synthetic, test-on-real classification), and privacy risk quantification (membership inference attacks).
+    \item \texttt{exp/churn/config\_constraint.toml}: Hyperparameter configuration file encoding distribution regularization weights, constraint penalty specification, warmup fraction, and quantile-bound definitions for reproducible training.
+\end{itemize}
 
-\\begin{itemize}
-    \\item \\texttt{tab\\_ddpm/gaussian\\_multinomial\\_diffusion.py}: Core diffusion model containing new regularization loss functions (\\texttt{\\_distribution\\_loss()} and \\texttt{\\_constraint\\_loss()}), integrated into the mixed-loss computation pipeline via warmup-scheduled weighting.\n    \\item \\texttt{scripts/train.py}: Extended training loop implementing target statistic computation from real data, warmup scheduler instantiation, per-epoch metric logging, and EMA checkpoint management.\n    \\item \\texttt{generate\\_synthetic\\_cond1.py}: Standalone, reproducible generation script featuring EMA-checkpoint restoration, deterministic seed initialization, and batch-wise sampling with memory efficiency.\n    \\item \\texttt{evaluate\\_synthetic\\_cond1.py}: Comprehensive evaluation framework implementing deterministic stratified sampling, per-feature metric computation (Wasserstein, JSD, correlation), density/coverage estimation, constraint violation diagnostics, and publication-quality visualization generation.\n    \\item \\texttt{scripts/joint\\_benchmark.py}: Unified benchmarking utility combining fidelity metrics (Wasserstein, JSD, correlation), downstream utility assessment (train-on-synthetic, test-on-real classification), and privacy risk quantification (membership inference attacks).\n    \\item \\texttt{exp/churn/config\\_constraint.toml}: Hyperparameter configuration file encoding distribution regularization weights, constraint penalty specification, warmup fraction, and quantile-bound definitions for reproducible training.\n\\end{itemize}\n\n\\section*{ACKNOWLEDGMENT}\nThe authors gratefully acknowledge the foundational contributions of the GReaT framework developers, TabDDPM researchers, and the broader open-source machine learning community for evaluation metric implementations and benchmarking infrastructure. This research was conducted as part of the GenAI-GREAT-MODEL collaborative project on synthetic data generation and evaluation for financial applications. Computational resources were provided by the institutional high-performance computing cluster. We acknowledge constructive feedback from anonymous reviewers that substantially improved this manuscript."
+\section*{ACKNOWLEDGMENT}
+The authors gratefully acknowledge the foundational contributions of the GReaT framework developers, TabDDPM researchers, and the broader open-source machine learning community for evaluation metric implementations and benchmarking infrastructure. This research was conducted as part of the GenAI-GREAT-MODEL collaborative project on synthetic data generation and evaluation for financial applications. Computational resources were provided by the institutional high-performance computing cluster. We acknowledge constructive feedback from anonymous reviewers that substantially improved this manuscript.
 
 \begin{thebibliography}{99}
 \bibitem{patki} N. Patki, R. Wedge, and K. Veeramachaneni, ``The synthetic data vault,'' in Proc. IEEE Int. Conf. Data Sci. Adv. Anal. (DSAA), 2016.

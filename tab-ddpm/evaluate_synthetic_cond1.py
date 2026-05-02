@@ -48,14 +48,17 @@ UPPER_Q = 0.999
 EVAL_SEED = 0
 
 # Color scheme for visualizations
-BG_COLOR    = "#0F1"
-CARD_COLOR  = "#1E293B"
-TEXT_COLOR  = "#FFFFFF"
-MUTED_COLOR = "#FFFFFF"
-GOOD_COLOR  = "#10B981"
-SYN_COLOR   = "#3B82F6"
-BAD_COLOR   = "#EF4444"
-REAL_COLOR  = "#F97316"
+# IEEE-friendly color scheme (print + digital safe)
+
+BG_COLOR    = "#FFFFFF"   # white background
+CARD_COLOR  = "#FFFFFF"   # no dark cards in papers
+TEXT_COLOR  = "#000000"   # black text
+MUTED_COLOR = "#6B7280"   # neutral gray
+
+GOOD_COLOR  = "#009E73"   # green (improvement)
+SYN_COLOR   = "#0072B2"   # blue (synthetic data)
+BAD_COLOR   = "#D55E00"   # reddish-orange (degradation)
+REAL_COLOR  = "#000000"   # black (real data)
 
 
 def jsd(p: np.ndarray, q: np.ndarray) -> float:
